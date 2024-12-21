@@ -1,0 +1,120 @@
+package barbieri.claudio.redesocial.data.api
+
+import barbieri.claudio.redesocial.data.request.CommentRequest
+import barbieri.claudio.redesocial.data.request.IdRequest
+import barbieri.claudio.redesocial.data.request.LoginRequest
+import barbieri.claudio.redesocial.data.request.RegisterRequest
+import barbieri.claudio.redesocial.data.response.CommonResponse
+import barbieri.claudio.redesocial.data.response.FollowingResponse
+import barbieri.claudio.redesocial.data.response.PostResponse
+import barbieri.claudio.redesocial.data.response.PostsResponse
+import barbieri.claudio.redesocial.data.response.SearchResponse
+import barbieri.claudio.redesocial.data.response.SearchUserResponse
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
+
+interface SocialIfesApi {
+
+    @POST("login.php")
+    suspend fun login(
+        @Body loginRequest: LoginRequest
+    ): CommonResponse
+
+    @POST("cadastra_usuario.php")
+    suspend fun register(
+        @Body registerRequest: RegisterRequest
+    ): CommonResponse
+
+    @GET("busca_usuario.php")
+    suspend fun search(
+        @Query("busca") query: String
+    ): SearchResponse
+
+    @POST("atualizar_usuario.php")
+    suspend fun update(
+        @Body updateRequest: RegisterRequest
+    ): CommonResponse
+
+    @GET("pegar_usuario.php")
+    suspend fun getUser(
+        @Query("login") query: String
+    ): SearchUserResponse
+
+    @POST("seguir.php")
+    suspend fun follow(
+        @Query("usuario") query: String
+    ): CommonResponse
+
+    @POST("desfazer_seguir.php")
+    suspend fun unfollow(
+        @Query("usuario") query: String
+    ): CommonResponse
+
+    @GET("pegar_seguindo.php")
+    suspend fun getFollowing(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("usuario_login") user: String
+    ): FollowingResponse
+
+    @POST("post.php")
+    suspend fun post(
+        @Body postRequest: RegisterRequest
+    ): CommonResponse
+
+    @GET("pegar_post.php")
+    suspend fun getPost(
+        @Query("id") id: Int
+    ): PostResponse
+
+    @GET("pegar_posts.php")
+    suspend fun getPosts(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("usuario") user: String? = null
+    ): PostsResponse
+
+    @POST("comentar.php")
+    suspend fun comment(
+        @Body commentRequest: CommentRequest,
+    ): CommonResponse
+
+    @POST("curtir.php")
+    suspend fun like(
+        @Body idRequest: IdRequest,
+    ): CommonResponse
+
+    @POST("descutir.php")
+    suspend fun unlike(
+        @Body idRequest: IdRequest,
+    ): CommonResponse
+
+    @POST("excluir_post.php")
+    suspend fun deletePost(
+        @Body idRequest: IdRequest,
+    ): CommonResponse
+
+    @GET("pegar_comentarios.php")
+    suspend fun getComments(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("post_id") id: String
+    ): CommonResponse
+
+    @GET("pegar_galeria.php")
+    suspend fun getPhotos(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("usuario_login") login: String
+    ): CommonResponse
+
+    @GET("pegar_notificacoes.php")
+    suspend fun getNotifications(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("somente_novas") news: String
+    ): CommonResponse
+
+}
