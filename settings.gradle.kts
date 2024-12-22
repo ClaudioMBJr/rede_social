@@ -21,3 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "RedeSocial"
 include(":app")
+include(":login")
+include(":commons")
+include(":signup")
+include(":home")
