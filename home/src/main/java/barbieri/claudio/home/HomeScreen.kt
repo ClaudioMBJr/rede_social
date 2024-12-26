@@ -1,10 +1,9 @@
 package barbieri.claudio.home
 
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +18,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -42,7 +38,8 @@ import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    navigateToPost: (Int) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -50,14 +47,20 @@ fun HomeScreen(
         viewModel.uiState.showError.collect {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
-        viewModel.event.collect {
+    }
 
+    LaunchedEffect(viewModel) {
+        viewModel.event.collect {
+            when (it) {
+                is HomeViewModel.ScreenEvent.NavigateToPost -> navigateToPost(it.postId)
+            }
         }
     }
 
     ScreenContent(
         uiState = viewModel.uiState,
-        updateList = { viewModel.getPosts(true) }
+        updateList = { viewModel.getPosts(true) },
+        seePost = viewModel::navigateToPost
     )
 }
 
@@ -65,6 +68,7 @@ fun HomeScreen(
 private fun ScreenContent(
     uiState: HomeViewModel.UiState,
     updateList: () -> Unit,
+    seePost: (Int) -> Unit
 ) {
     val showProgress = uiState.showProgress.collectAsStateWithLifecycle().value
     val posts = uiState.posts.collectAsStateWithLifecycle().value
@@ -84,7 +88,11 @@ private fun ScreenContent(
                 }
                 items(posts) { post ->
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                seePost(post.id)
+                            },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Row(
@@ -144,6 +152,7 @@ private fun Preview() {
         uiState = HomeViewModel.UiState().apply {
             setPosts(listOf(Post.mock(), Post.mock(), Post.mock(), Post.mock(), Post.mock()))
         },
-        updateList = {}
+        updateList = {},
+        seePost = {}
     )
 }

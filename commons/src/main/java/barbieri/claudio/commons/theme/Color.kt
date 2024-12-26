@@ -1,4 +1,4 @@
-package barbieri.claudio.redesocial.presentation.ui.theme
+package barbieri.claudio.commons.theme
 
 import androidx.compose.ui.graphics.Color
 

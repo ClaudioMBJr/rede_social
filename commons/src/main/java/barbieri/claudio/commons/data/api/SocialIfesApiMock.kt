@@ -1,10 +1,10 @@
 package barbieri.claudio.commons.data.api
 
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import barbieri.claudio.commons.data.request.CommentRequest
 import barbieri.claudio.commons.data.request.IdRequest
 import barbieri.claudio.commons.data.request.LoginRequest
 import barbieri.claudio.commons.data.request.RegisterRequest
+import barbieri.claudio.commons.data.response.CommentsResponse
 import barbieri.claudio.commons.data.response.CommonResponse
 import barbieri.claudio.commons.data.response.FollowingResponse
 import barbieri.claudio.commons.data.response.PostResponse
@@ -65,8 +65,8 @@ class SocialIfesApiMock : SocialIfesApi {
     override suspend fun getComments(
         limit: Int,
         offset: Int,
-        id: String
-    ): CommonResponse = CommonResponse.mock()
+        id: Int
+    ): CommentsResponse = CommentsResponse.mock()
 
     override suspend fun getPhotos(
         limit: Int,

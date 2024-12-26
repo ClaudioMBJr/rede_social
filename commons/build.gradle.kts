@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -55,4 +56,5 @@ dependencies {
     api(libs.coil.compose.v222)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    api(libs.kotlinx.serialization.json)
 }

@@ -4,6 +4,7 @@ import barbieri.claudio.commons.data.request.CommentRequest
 import barbieri.claudio.commons.data.request.IdRequest
 import barbieri.claudio.commons.data.request.LoginRequest
 import barbieri.claudio.commons.data.request.RegisterRequest
+import barbieri.claudio.commons.data.response.CommentsResponse
 import barbieri.claudio.commons.data.response.CommonResponse
 import barbieri.claudio.commons.data.response.FollowingResponse
 import barbieri.claudio.commons.data.response.PostResponse
@@ -100,8 +101,8 @@ interface SocialIfesApi {
     suspend fun getComments(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
-        @Query("post_id") id: String
-    ): CommonResponse
+        @Query("post_id") id: Int
+    ): CommentsResponse
 
     @GET("pegar_galeria.php")
     suspend fun getPhotos(

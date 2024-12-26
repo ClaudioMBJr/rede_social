@@ -1,4 +1,4 @@
-package barbieri.claudio.redesocial.presentation.ui.theme
+package barbieri.claudio.commons.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

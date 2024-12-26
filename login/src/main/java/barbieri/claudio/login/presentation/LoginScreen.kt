@@ -1,7 +1,6 @@
 package barbieri.claudio.login.presentation
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,23 +32,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
+    navigateToHome: () -> Unit,
+    navigateToSignup: () -> Unit,
 ) {
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.event.collect {
+            when (it) {
+                LoginViewModel.ScreenEvent.NavigateToHome -> navigateToHome()
+
+                LoginViewModel.ScreenEvent.NavigateToSignup -> navigateToSignup()
+            }
+        }
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.uiState.showError.collect {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
-        viewModel.event.collect {
-            when (it) {
-                LoginViewModel.ScreenEvent.NavigateToHome -> {
-                    /**TODO navega para home **/
-                }
-
-                LoginViewModel.ScreenEvent.NavigateToSignup -> {
-                    /**TODO navega para registro **/
-                }
-            }
         }
     }
 
@@ -103,28 +104,33 @@ private fun ScreenContent(
             Spacer(Modifier.weight(1f))
             Row {
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     onClick = { login() },
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Blue),
                     content = {
-                        Column(modifier = Modifier.background(color = Color.Blue)) {
-                            Text(
-                                modifier = Modifier.padding(16.dp),
-                                text = "Registrar"
-                            )
-                        }
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = "Login",
+                            color = Color.White
+
+                        )
                     }
                 )
                 Spacer(Modifier.padding(8.dp))
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     onClick = { register() },
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Blue),
                     content = {
-                        Column(modifier = Modifier.background(color = Color.Blue)) {
-                            Text(
-                                modifier = Modifier.padding(16.dp),
-                                text = "Login"
-                            )
-                        }
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = "Registrar",
+                            color = Color.White
+                        )
                     }
                 )
             }

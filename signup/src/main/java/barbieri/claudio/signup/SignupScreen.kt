@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -39,19 +39,20 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun SignupScreen(
     viewModel: SignupViewModel = hiltViewModel(),
+    navigateToLogin : () -> Unit
 ) {
     val context = LocalContext.current
 
-    LaunchedEffect(viewModel)
-    {
+    LaunchedEffect(viewModel) {
         viewModel.uiState.showError.collect {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
-                SignupViewModel.ScreenEvent.NavigateToLogin -> {
-                    /**TODO navega para login **/
-                }
+                SignupViewModel.ScreenEvent.NavigateToLogin -> navigateToLogin()
             }
         }
     }
@@ -161,13 +162,13 @@ private fun ScreenContent(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { register() },
+                colors = ButtonDefaults.buttonColors(contentColor = Color.Blue),
                 content = {
-                    Column(modifier = Modifier.background(color = Color.Blue)) {
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = "Registrar"
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.padding(16.dp),
+                        text = "Registrar",
+                        color = Color.White
+                    )
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))

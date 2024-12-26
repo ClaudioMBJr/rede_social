@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: SocialIfesRepository,
+    private val repository: SocialIfesRepository
 ) : ViewModel() {
 
     private val _event = Channel<ScreenEvent>()
@@ -42,8 +42,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    sealed class ScreenEvent {
+    fun navigateToPost(postId: Int) =
+        viewModelScope.launch { _event.send(ScreenEvent.NavigateToPost(postId)) }
 
+    sealed class ScreenEvent {
+        data class NavigateToPost(val postId: Int) : ScreenEvent()
     }
 
     class UiState : BaseUiState() {
