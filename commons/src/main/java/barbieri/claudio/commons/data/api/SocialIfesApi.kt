@@ -1,8 +1,8 @@
 package barbieri.claudio.commons.data.api
 
+import android.R
 import barbieri.claudio.commons.data.request.CommentRequest
 import barbieri.claudio.commons.data.request.IdRequest
-import barbieri.claudio.commons.data.request.LoginRequest
 import barbieri.claudio.commons.data.request.RegisterRequest
 import barbieri.claudio.commons.data.response.CommentsResponse
 import barbieri.claudio.commons.data.response.CommonResponse
@@ -11,26 +11,38 @@ import barbieri.claudio.commons.data.response.PostResponse
 import barbieri.claudio.commons.data.response.PostsResponse
 import barbieri.claudio.commons.data.response.SearchResponse
 import barbieri.claudio.commons.data.response.SearchUserResponse
+import barbieri.claudio.commons.data.response.UserResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface SocialIfesApi {
 
     @POST("login.php")
     suspend fun login(
-        @Body loginRequest: LoginRequest
+        @Header("Authorization") authHeader: String
     ): CommonResponse
 
+    @Multipart
     @POST("cadastra_usuario.php")
     suspend fun register(
-        @Body registerRequest: RegisterRequest
+        @Part("login") login: RequestBody,
+        @Part("senha") password: RequestBody,
+        @Part("nome") name: RequestBody,
+        @Part("cidade") city: RequestBody,
+        @Part("data_nascimento") birthDate: RequestBody,
+        @Part image: MultipartBody.Part?,
     ): CommonResponse
 
-    @GET("busca_usuario.php")
+    @GET("buscar_usuario.php")
     suspend fun search(
-        @Query("busca") query: String
+        @Query("busca") query: String,
     ): SearchResponse
 
     @POST("atualizar_usuario.php")
@@ -41,16 +53,18 @@ interface SocialIfesApi {
     @GET("pegar_usuario.php")
     suspend fun getUser(
         @Query("login") query: String
-    ): SearchUserResponse
+    ): UserResponse
 
+    @Multipart
     @POST("seguir.php")
     suspend fun follow(
-        @Query("usuario") query: String
+        @Part("usuario") user : RequestBody
     ): CommonResponse
 
+    @Multipart
     @POST("desfazer_seguir.php")
     suspend fun unfollow(
-        @Query("usuario") query: String
+        @Part("usuario") user : RequestBody
     ): CommonResponse
 
     @GET("pegar_seguindo.php")
@@ -60,9 +74,11 @@ interface SocialIfesApi {
         @Query("usuario_login") user: String
     ): FollowingResponse
 
+    @Multipart
     @POST("post.php")
     suspend fun post(
-        @Body postRequest: RegisterRequest
+        @Part("texto") text: RequestBody?,
+        @Part image: MultipartBody.Part?,
     ): CommonResponse
 
     @GET("pegar_post.php")
@@ -82,14 +98,16 @@ interface SocialIfesApi {
         @Body commentRequest: CommentRequest,
     ): CommonResponse
 
+    @Multipart
     @POST("curtir.php")
     suspend fun like(
-        @Body idRequest: IdRequest,
+        @Part("post_id") idRequest: RequestBody,
     ): CommonResponse
 
+    @Multipart
     @POST("descutir.php")
     suspend fun unlike(
-        @Body idRequest: IdRequest,
+        @Body idRequest: RequestBody,
     ): CommonResponse
 
     @POST("excluir_post.php")

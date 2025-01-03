@@ -49,6 +49,7 @@ dependencies {
     api(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
     api(libs.retrofit)
+    api(libs.httpinterceptor)
     api(libs.retrofit.converter.gson)
     api(libs.coil.compose.v222)
     api(libs.navigation)

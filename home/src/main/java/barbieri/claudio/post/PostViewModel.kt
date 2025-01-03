@@ -29,7 +29,7 @@ class PostViewModel @Inject constructor(private val repository: SocialIfesReposi
 
     val uiState = UiState()
 
-    fun setPostId(postId : Int) {
+    fun setPostId(postId: Int) {
         this.postId = postId
         getPost(postId)
     }
@@ -89,26 +89,14 @@ class PostViewModel @Inject constructor(private val repository: SocialIfesReposi
         }
     }
 
-    fun follow() {
+    fun navigateToProfile(login: String) {
         viewModelScope.launch {
-            uiState.showProgress()
-            try {
-                if (uiState.getIsFollowing()) {
-                    repository.unfollow(user = user).getOrThrow()
-                    uiState.unfollow()
-                } else {
-                    repository.follow(user = user).exceptionOrNull()
-                    uiState.follow()
-                }
-            } catch (e: Throwable) {
-                uiState.sendToastMessage(e.message.orEmpty())
-            }
-            uiState.hideProgress()
+            _event.send(ScreenEvent.NavigateToProfile(login))
         }
     }
 
-
     sealed class ScreenEvent {
+        data class NavigateToProfile(val login: String) : ScreenEvent()
     }
 
     class UiState : BaseUiState() {
@@ -135,14 +123,6 @@ class PostViewModel @Inject constructor(private val repository: SocialIfesReposi
             post.value = post.value?.copy(isLike = false)
         }
 
-        fun follow() {
-            post.value = post.value?.copy(isFollowing = true)
-        }
-
-        fun unfollow() {
-            post.value = post.value?.copy(isFollowing = false)
-        }
-
         fun updateComment(text: TextFieldValue) {
             comment.value = text
         }
@@ -150,8 +130,6 @@ class PostViewModel @Inject constructor(private val repository: SocialIfesReposi
         fun getText() = comment.value.text
 
         fun getIsLiked() = post.value?.isLike == true
-
-        fun getIsFollowing() = post.value?.isFollowing == true
 
         fun updateLimitAndOffset() {
             currentOffset = currentLimit

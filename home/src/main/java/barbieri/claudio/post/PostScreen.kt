@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -42,13 +43,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import barbieri.claudio.commons.domain.model.User
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun PostScreen(
     viewModel: PostViewModel = hiltViewModel(),
-    postId : Int,
-    navigateToProfile: () -> Unit
+    postId: Int,
+    navigateToProfile: (String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -64,15 +66,17 @@ fun PostScreen(
 
     LaunchedEffect(viewModel) {
         viewModel.event.collect {
-
+            when (it) {
+                is PostViewModel.ScreenEvent.NavigateToProfile -> navigateToProfile(it.login)
+            }
         }
     }
 
     ScreenContent(
         uiState = viewModel.uiState,
         like = viewModel::like,
-        follow = viewModel::follow,
-        comment = viewModel::comment
+        comment = viewModel::comment,
+        navigateToProfile = viewModel::navigateToProfile,
     )
 }
 
@@ -80,8 +84,8 @@ fun PostScreen(
 private fun ScreenContent(
     uiState: PostViewModel.UiState,
     like: () -> Unit,
-    follow: () -> Unit,
-    comment: () -> Unit
+    comment: () -> Unit,
+    navigateToProfile: (String) -> Unit,
 ) {
     val showProgress = uiState.showProgress.collectAsStateWithLifecycle().value
     val post = uiState.post.collectAsStateWithLifecycle().value
@@ -119,24 +123,16 @@ private fun ScreenContent(
                                         .border(
                                             2.dp,
                                             Color.Blue
-                                        ),
-                                    painter = rememberAsyncImagePainter(presentation.userPhoto),
+                                        )
+                                        .clickable {
+                                            navigateToProfile(presentation.login)
+                                        },
+                                    painter = rememberAsyncImagePainter(presentation.userPhoto.takeIf { it.isNotEmpty() }
+                                       ),
                                     contentDescription = "Foto",
                                 )
                                 Spacer(modifier = Modifier.padding(8.dp))
                                 Text(text = presentation.name)
-                                Spacer(modifier = Modifier.padding(8.dp))
-                                TextButton(
-                                    onClick = { follow() },
-                                    shape = RoundedCornerShape(7.dp),
-                                    colors = ButtonDefaults.buttonColors(contentColor = if (presentation.isFollowing) Color.Gray else Color.Blue),
-                                    content = {
-                                        Text(
-                                            text = if (presentation.isFollowing) "Seguindo" else "Seguir",
-                                            color = Color.White
-                                        )
-                                    }
-                                )
                             }
                             Spacer(modifier = Modifier.padding(8.dp))
                             if (presentation.image.isNotEmpty()) {
@@ -183,7 +179,8 @@ private fun ScreenContent(
                                     2.dp,
                                     Color.Blue
                                 ),
-                            painter = rememberAsyncImagePainter(comment.userPhoto),
+                            painter = rememberAsyncImagePainter(comment.userPhoto.takeIf { it.isNotEmpty() }
+                               ),
                             contentDescription = "Foto",
                         )
                         Spacer(modifier = Modifier.padding(8.dp))

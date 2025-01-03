@@ -13,6 +13,7 @@ class SharedPreferencesManager @Inject constructor(@ApplicationContext context: 
         with(sharedPreferences.edit()) {
             putString("login", user.login)
             putString("password", user.password)
+            putString("token", user.token)
             apply()
         }
     }
@@ -20,8 +21,9 @@ class SharedPreferencesManager @Inject constructor(@ApplicationContext context: 
     fun getUser(): UserAuth? {
         val login = sharedPreferences.getString("login", null)
         val password = sharedPreferences.getString("password", null)
-        return if (login != null && password != null) {
-            UserAuth(login, password)
+        val token = sharedPreferences.getString("token", null)
+        return if (login != null && password != null && token != null) {
+            UserAuth(login, password, token)
         } else {
             null
         }

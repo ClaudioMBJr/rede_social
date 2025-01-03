@@ -4,9 +4,10 @@ import java.io.Serializable
 
 data class UserAuth(
     val login: String,
-    val password: String
+    val password: String,
+    val token : String
 ) : Serializable {
     companion object {
-        fun mock() = UserAuth("login", "password")
+        fun mock() = UserAuth("login", "password", "token")
     }
 }

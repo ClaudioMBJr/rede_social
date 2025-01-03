@@ -1,6 +1,7 @@
 package barbieri.claudio.commons.data.request
 
 import com.google.gson.annotations.SerializedName
+import okhttp3.MultipartBody
 import java.io.File
 
 data class RegisterRequest(
@@ -15,7 +16,7 @@ data class RegisterRequest(
     @SerializedName("data_nascimento")
     val birthDate: String,
     @SerializedName("foto")
-    val image: File?
+    val image: String?
 ) {
     companion object {
         fun mock() = RegisterRequest(

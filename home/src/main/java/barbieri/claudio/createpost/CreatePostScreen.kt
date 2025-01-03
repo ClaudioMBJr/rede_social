@@ -1,12 +1,10 @@
-package barbieri.claudio.signup
+package barbieri.claudio.createpost
 
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,9 +36,9 @@ import barbieri.claudio.commons.ext.getFileFromUri
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun SignupScreen(
-    viewModel: SignupViewModel = hiltViewModel(),
-    navigateToLogin : () -> Unit
+fun CreatePostScreen(
+    viewModel: CreatePostViewModel = hiltViewModel(),
+    goBack: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -56,18 +51,18 @@ fun SignupScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
-                SignupViewModel.ScreenEvent.NavigateToLogin -> navigateToLogin()
+                CreatePostViewModel.ScreenEvent.GoBack -> goBack()
             }
         }
     }
 
-    ScreenContent(uiState = viewModel.uiState, register = viewModel::signup)
+    ScreenContent(uiState = viewModel.uiState, post = viewModel::post)
 }
 
 @Composable
 private fun ScreenContent(
-    uiState: SignupViewModel.UiState,
-    register: () -> Unit
+    uiState: CreatePostViewModel.UiState,
+    post: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -78,11 +73,7 @@ private fun ScreenContent(
     }
 
     val showProgress = uiState.showProgress.collectAsStateWithLifecycle().value
-    val login = uiState.login.collectAsStateWithLifecycle().value
-    val password = uiState.password.collectAsStateWithLifecycle().value
-    val city = uiState.city.collectAsStateWithLifecycle().value
-    val birthdate = uiState.birthdate.collectAsStateWithLifecycle().value
-    val name = uiState.name.collectAsStateWithLifecycle().value
+    val post = uiState.post.collectAsStateWithLifecycle().value
     val image = uiState.image.collectAsStateWithLifecycle().value
 
     Box(
@@ -97,81 +88,50 @@ private fun ScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = rememberAsyncImagePainter(image),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .clickable {
-                        launcher.launch("image/*")
+            if (image != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp)
+                )
+            } else {
+                Button(
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(20.dp),
+                    onClick = { launcher.launch("image/*") },
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Blue),
+                    content = {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = "Adicionar imagem",
+                            color = Color.White
+                        )
                     }
-            )
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = login,
-                onValueChange = { uiState.setLogin(it) },
-                label = { Text("Login") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = password,
-                onValueChange = { uiState.setPassword(it) },
-                label = { Text("Senha") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = name,
-                onValueChange = { uiState.setName(it) },
-                label = { Text("Nome") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = birthdate,
-                onValueChange = { uiState.setBirthdate(it) },
-                label = { Text("Data de nascimento") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = city,
-                onValueChange = { uiState.setCity(it) },
-                label = { Text("Cidade") },
+                value = post,
+                onValueChange = { uiState.setPost(it) },
+                label = { Text("Post") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
             )
             Spacer(Modifier.weight(1f))
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { register() },
+                onClick = { post() },
                 colors = ButtonDefaults.buttonColors(contentColor = Color.Blue),
                 content = {
                     Text(
                         modifier = Modifier.padding(16.dp),
-                        text = "Registrar",
+                        text = "Post",
                         color = Color.White
                     )
                 }
@@ -185,7 +145,7 @@ private fun ScreenContent(
 @Composable
 private fun Preview() {
     ScreenContent(
-        uiState = SignupViewModel.UiState(),
-        register = {}
+        uiState = CreatePostViewModel.UiState(),
+        post = {}
     )
 }

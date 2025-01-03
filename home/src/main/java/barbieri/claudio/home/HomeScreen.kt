@@ -18,8 +18,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,9 +46,15 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigateToPost: (Int) -> Unit
+    navigateToPost: (Int) -> Unit,
+    navigateToCreatePost: () -> Unit,
+    navigateToSearch: () -> Unit,
 ) {
     val context = LocalContext.current
+
+    LaunchedEffect(viewModel) {
+        viewModel.getPosts()
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.uiState.showError.collect {
@@ -53,22 +66,26 @@ fun HomeScreen(
         viewModel.event.collect {
             when (it) {
                 is HomeViewModel.ScreenEvent.NavigateToPost -> navigateToPost(it.postId)
+                is HomeViewModel.ScreenEvent.NavigateToCreatePost -> navigateToCreatePost()
+                is HomeViewModel.ScreenEvent.NavigateToSearch -> navigateToSearch()
             }
         }
     }
 
     ScreenContent(
         uiState = viewModel.uiState,
-        updateList = { viewModel.getPosts(true) },
-        seePost = viewModel::navigateToPost
+        seePost = viewModel::navigateToPost,
+        createPost = viewModel::navigateToCreatePost,
+        search = viewModel::navigateToSearch
     )
 }
 
 @Composable
 private fun ScreenContent(
     uiState: HomeViewModel.UiState,
-    updateList: () -> Unit,
-    seePost: (Int) -> Unit
+    seePost: (Int) -> Unit,
+    createPost: () -> Unit,
+    search: () -> Unit,
 ) {
     val showProgress = uiState.showProgress.collectAsStateWithLifecycle().value
     val posts = uiState.posts.collectAsStateWithLifecycle().value
@@ -108,7 +125,8 @@ private fun ScreenContent(
                                         2.dp,
                                         Color.Blue
                                     ),
-                                painter = rememberAsyncImagePainter(post.userPhoto),
+                                painter = rememberAsyncImagePainter(post.userPhoto.takeIf { it.isNotEmpty() }
+                                   ),
                                 contentDescription = "Foto",
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
@@ -142,6 +160,28 @@ private fun ScreenContent(
                 CircularProgressIndicator(modifier = Modifier.size(60.dp))
             }
         }
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomEnd),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .size(35.dp),
+                onClick = { search() },
+            ) {
+                Icon(Icons.Filled.Search, "Buscar")
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            FloatingActionButton(
+                modifier = Modifier
+                    .size(40.dp),
+                onClick = { createPost() },
+            ) {
+                Icon(Icons.Filled.Create, "Criar post")
+            }
+        }
     }
 }
 
@@ -152,7 +192,8 @@ private fun Preview() {
         uiState = HomeViewModel.UiState().apply {
             setPosts(listOf(Post.mock(), Post.mock(), Post.mock(), Post.mock(), Post.mock()))
         },
-        updateList = {},
-        seePost = {}
+        search = {},
+        seePost = {},
+        createPost = {}
     )
 }

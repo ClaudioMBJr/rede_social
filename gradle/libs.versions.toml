@@ -11,6 +11,7 @@ hilt = "2.51.1"
 coilCompose = "2.2.2"
 navigationVersion = "2.8.5"
 kotlinx-serialization = "1.6.0"
+http-interceptor = "4.11.0"
 
 
 [libraries]
@@ -24,6 +25,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+httpinterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "http-interceptor" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }

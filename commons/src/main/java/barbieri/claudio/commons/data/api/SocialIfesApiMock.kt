@@ -2,7 +2,6 @@ package barbieri.claudio.commons.data.api
 
 import barbieri.claudio.commons.data.request.CommentRequest
 import barbieri.claudio.commons.data.request.IdRequest
-import barbieri.claudio.commons.data.request.LoginRequest
 import barbieri.claudio.commons.data.request.RegisterRequest
 import barbieri.claudio.commons.data.response.CommentsResponse
 import barbieri.claudio.commons.data.response.CommonResponse
@@ -11,23 +10,34 @@ import barbieri.claudio.commons.data.response.PostResponse
 import barbieri.claudio.commons.data.response.PostsResponse
 import barbieri.claudio.commons.data.response.SearchResponse
 import barbieri.claudio.commons.data.response.SearchUserResponse
+import barbieri.claudio.commons.data.response.UserResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 class SocialIfesApiMock : SocialIfesApi {
 
-    override suspend fun login(loginRequest: LoginRequest): CommonResponse = CommonResponse.mock()
+    override suspend fun login(token: String): CommonResponse = CommonResponse.mock()
 
-    override suspend fun register(registerRequest: RegisterRequest) = CommonResponse.mock()
+    override suspend fun register(
+        login: RequestBody,
+        password: RequestBody,
+        name: RequestBody,
+        city: RequestBody,
+        birthDate: RequestBody,
+        image: MultipartBody.Part?
+    ): CommonResponse = CommonResponse.mock()
 
     override suspend fun search(query: String): SearchResponse = SearchResponse.mock()
 
     override suspend fun update(updateRequest: RegisterRequest): CommonResponse =
         CommonResponse.mock()
 
-    override suspend fun getUser(query: String) = SearchUserResponse.mock()
+    override suspend fun getUser(query: String) = UserResponse.mock()
 
-    override suspend fun follow(query: String) = CommonResponse.mock()
+    override suspend fun follow(query: RequestBody) = CommonResponse.mock()
 
-    override suspend fun unfollow(query: String) = CommonResponse.mock()
+    override suspend fun unfollow(query: RequestBody) = CommonResponse.mock()
 
     override suspend fun getFollowing(
         limit: Int,
@@ -35,7 +45,7 @@ class SocialIfesApiMock : SocialIfesApi {
         user: String
     ): FollowingResponse = FollowingResponse.mock()
 
-    override suspend fun post(postRequest: RegisterRequest): CommonResponse = CommonResponse.mock()
+    override suspend fun post(text: RequestBody?, image: MultipartBody. Part?): CommonResponse = CommonResponse.mock()
 
     override suspend fun getPost(id: Int): PostResponse = PostResponse.mock()
 
@@ -56,9 +66,9 @@ class SocialIfesApiMock : SocialIfesApi {
     override suspend fun comment(commentRequest: CommentRequest): CommonResponse =
         CommonResponse.mock()
 
-    override suspend fun like(idRequest: IdRequest): CommonResponse = CommonResponse.mock()
+    override suspend fun like(idRequest: RequestBody): CommonResponse = CommonResponse.mock()
 
-    override suspend fun unlike(idRequest: IdRequest): CommonResponse = CommonResponse.mock()
+    override suspend fun unlike(idRequest: RequestBody): CommonResponse = CommonResponse.mock()
 
     override suspend fun deletePost(idRequest: IdRequest): CommonResponse = CommonResponse.mock()
 

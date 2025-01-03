@@ -15,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: SocialIfesRepository,
-    private val sharedPreferencesManager: SharedPreferencesManager
+    private val repository: SocialIfesRepository
 ) : ViewModel() {
 
     private val _event = Channel<ScreenEvent>()
@@ -29,12 +28,6 @@ class LoginViewModel @Inject constructor(
             uiState.showProgress()
             repository.login(uiState.getLogin(), uiState.getPassword()).fold(
                 onSuccess = {
-                    sharedPreferencesManager.saveUser(
-                        user = UserAuth(
-                            uiState.getLogin(),
-                            uiState.getPassword()
-                        )
-                    )
                     sendNavigateToHomeEvent()
                 },
                 onFailure = {
@@ -70,6 +63,6 @@ class LoginViewModel @Inject constructor(
 
         fun getLogin() = login.value
 
-        fun getPassword() = login.value
+        fun getPassword() = password.value
     }
 }
