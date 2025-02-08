@@ -1,9 +1,7 @@
 package barbieri.claudio.commons.domain.model
 
-import java.util.Date
-
 data class Post(
-    val date: Date,
+    val date : String,
     val text: String,
     val login: String,
     val name: String,
@@ -13,7 +11,7 @@ data class Post(
 ) {
     companion object {
         fun mock() = Post(
-            date = Date(),
+            date = "2025-01-06 15:33:16",
             text = "texto",
             login = "login",
             name = "nome",

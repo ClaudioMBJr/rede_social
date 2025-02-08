@@ -7,7 +7,7 @@ import java.util.Date
 object PostMapper {
 
     fun PostResponse.toPost() = Post(
-        date = date ?: Date(),
+        date = date.orEmpty(),
         text = text.orEmpty(),
         login = login.orEmpty(),
         name = name.orEmpty(),

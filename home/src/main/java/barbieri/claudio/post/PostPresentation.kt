@@ -4,7 +4,7 @@ import barbieri.claudio.commons.domain.model.Post
 import java.util.Date
 
 data class PostPresentation(
-    val date: Date,
+    val date: String,
     val text: String,
     val login: String,
     val name: String,
